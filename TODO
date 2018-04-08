@@ -1,0 +1,3 @@
+* fix zero delay buffer bug
+* do all processing in double and dither back down at the end
+* implement parametric low shelf
