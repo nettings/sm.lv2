@@ -201,11 +201,10 @@ run(LV2_Handle instance, uint32_t n_samples)
 			// No. Nudge to the nearest whole-sample delay for efficient lossless operation.
 			for (uint32_t pos = 0; pos < n_samples; pos++) {
 				long readp = sm->writep[i] - (long)round(sm->current_delay[i]);
-				float read = sm->dlybuf[i][readp & sm->dlybufmask[i]];
- 				sm->dlybuf[i][sm->writep[i] & sm->dlybufmask[i]] = in[i][pos];
+				sm->dlybuf[i][sm->writep[i] & sm->dlybufmask[i]] = in[i][pos];
 				sm->writep[i]++;
 	        		sm->current_gain[i] = sm->current_gain[i] * lp_i + sm->target_gain[i] * lp;
-			        out[i][pos] = read * sm->current_gain[i];
+			        out[i][pos] = sm->dlybuf[i][readp & sm->dlybufmask[i]] * sm->current_gain[i];
 			}
 		} else {
 			// Yes. Move to new delay using cubic spline interpolation (click-free, temporarily lossy).
