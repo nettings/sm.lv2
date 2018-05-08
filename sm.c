@@ -32,8 +32,8 @@
 #define NCHANPORTS 7		// number of per-channel ports
 #define NGLOBALS 1		// number of global ports
 #define MAXDLY 0.05f		// the maximum delay, in seconds
-#define LP_SMOOTHING 7.0f	// heuristic value for gain paramter smoothing
-#define DB_CO(_dbgain) ((_dbgain) > -119.0f ? powf(10.0f, (_dbgain) * 0.05f) : 0.0f)
+#define LP_SMOOTHING 7.0f	// heuristic value for gain parameter smoothing
+#define DB_CO(_dbgain) ((_dbgain) > -89.9f ? powf(10.0f, (_dbgain) * 0.05f) : 0.0f)
 #define CALC_DLY(_ms, _hz) (_hz * fmin(MAXDLY, _ms * 0.001))
 
 typedef enum {
