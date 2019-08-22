@@ -29,7 +29,7 @@
 #define NCHANS 2		// number of channels for plugin 
 #define SM_URI "http://stackingdwarves.net/lv2/sm#stereo"
 
-#define NCHANPORTS 10		// number of per-channel ports
+#define NCHANPORTS 11		// number of per-channel ports
 #define NGLOBALS 2		// number of global ports
 #define MAXDLY 0.05f		// the maximum delay, in seconds
 #define LP_SMOOTHING 7.0f	// heuristic value for gain parameter smoothing
@@ -50,7 +50,8 @@ typedef enum {
 	SM_delayOn  = 8,
 	SM_invert   = 9,
 	SM_loshF    = 10,
-	SM_loshG    = 11
+	SM_loshG    = 11,
+	SM_loshOn   = 12
 	// so use multiples for additional channels
 } port_t;
 
@@ -74,6 +75,7 @@ typedef struct {
 		float *invert[NCHANS];  // 1 means polarity inversion
 		float *loshF[NCHANS];	// low shelf frequency in Hz
 		float *loshG[NCHANS];	// low shelf gain in dB
+		float *loshOn[NCHANS];	// 0 is off
 	} cports;
 	// internal data
 	double rate;			// sample rate in Hz
@@ -177,6 +179,9 @@ static void connect_port(
 		break;
 	case SM_loshG:
 		sm->cports.loshG[pindex] = (float*)data;
+		break;
+	case SM_loshOn:
+		sm->cports.loshOn[pindex] = (float*)data;
 		break;
 	}
 }

@@ -63,7 +63,7 @@
 		lv2:symbol "activeL";
 		lv2:name "On L";
 		rdfs:comment "activate left channel";
-		lv2:default 0.0;
+		lv2:default 1.0;
 		lv2:minimum 0.0;
 		lv2:maximum 1.0;
 		lv2:portProperty lv2:toggled;
@@ -118,9 +118,9 @@
 		a lv2:ControlPort, lv2:InputPort;
                 lv2:index 9;
                 lv2:symbol "invertL";
-                lv2:name "Polarity L";
+                lv2:name "ø L";
                 rdfs:comment "invert polarity of left channel";
-                lv2:default 1.0;
+                lv2:default 0.0;
                 lv2:minimum 0.0;
                 lv2:maximum 1.0;
                 lv2:portProperty lv2:toggled;
@@ -150,28 +150,38 @@
                         [ rdfs:label "-6"; rdf:value -6.0],
                         [ rdfs:label "-9"; rdf:value -9.0];
         ], [
-		a lv2:AudioPort, lv2:InputPort;
+		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 12;
+		lv2:symbol "loshOnL";
+		lv2:name "Low shelf L on";
+		rdfs:comment "enable low shelf on left channel";
+                lv2:default 0.0;
+                lv2:minimum 0.0;
+                lv2:maximum 1.0;
+		lv2:portProperty lv2:toggled;
+	], [
+		a lv2:AudioPort, lv2:InputPort;
+		lv2:index 13;
 		lv2:symbol "inR";
 		lv2:name "Input R";
 	] , [
 		a lv2:AudioPort, lv2:OutputPort;
-		lv2:index 13;
+		lv2:index 14;
 		lv2:symbol "outR";
 		lv2:name "Output R";
 	] , [
 		a lv2:ControlPort, lv2:InputPort;
-		lv2:index 14;
+		lv2:index 15;
                 lv2:symbol "activeR";
                 lv2:name "On R";
 		rdfs:comment "activate right channel";
-                lv2:default 0.0;
+                lv2:default 1.0;
                 lv2:minimum 0.0;
                 lv2:maximum 1.0;
                 lv2:portProperty lv2:toggled;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
-		lv2:index 15;
+		lv2:index 16;
 		lv2:symbol "attR";
 		lv2:name "Attenuation R";
 		rdfs:comment "calibrate right channel level at the listening position";
@@ -188,7 +198,7 @@
 			[ rdfs:label "-12"; rdf:value -12.0];
 	] , [
 		a lv2:ControlPort, lv2:InputPort;
-		lv2:index 16;
+		lv2:index 17;
 		lv2:symbol "attOnR";
 		lv2:name "Attenuation R on";
 		rdfs:comment "activate attenuation on right channel";
@@ -198,7 +208,7 @@
 		lv2:portProperty lv2:toggled;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
-		lv2:index 17;
+		lv2:index 18;
 		lv2:symbol "delayR";
 		lv2:name "Delay R";
 		rdfs:comment "compensate right channel arrival time at the listening spot";
@@ -208,7 +218,7 @@
 		units:unit units:ms;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
-		lv2:index 18;
+		lv2:index 19;
 		lv2:symbol "delayROn";
 		lv2:name "Delay R on";
 		rdfs:comment "activate delay on right channel";
@@ -218,17 +228,17 @@
 		lv2:portProperty lv2:toggled;
 	], [
                 a lv2:ControlPort, lv2:InputPort;
-                lv2:index 19;
+                lv2:index 20;
                 lv2:symbol "invertR";
                 lv2:name "Polarity R";
                 rdfs:comment "invert polarity of right channel";
-                lv2:default 1.0;
+                lv2:default 0.0;
                 lv2:minimum 0.0;
                 lv2:maximum 1.0;
                 lv2:portProperty lv2:toggled;
         ], [
                 a lv2:ControlPort, lv2:InputPort;
-                lv2:index 20;
+                lv2:index 21;
                 lv2:symbol "loshFR";
                 lv2:name "Low shelf frequency R";
                 rdfs:comment "starting point of low-shelf filter on right channel";
@@ -238,7 +248,7 @@
 		units:unit units:hz;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
-                lv2:index 21;
+                lv2:index 22;
                 lv2:symbol "loshGR";
                 lv2:name "Low shelf gain R";
                 rdfs:comment "low shelf attenuation on right channel";
@@ -250,4 +260,14 @@
                         [ rdfs:label "-3"; rdf:value -3.0],
                         [ rdfs:label "-6"; rdf:value -6.0],
                         [ rdfs:label "-9"; rdf:value -9.0];
-        ].
+        ], [
+                a lv2:ControlPort, lv2:InputPort;
+                lv2:index 23;
+                lv2:symbol "loshOnR";
+                lv2:name "Low shelf R on";
+                rdfs:comment "enable low shelf on right channel";
+                lv2:default 0.0;
+                lv2:minimum 0.0;
+                lv2:maximum 1.0;
+                lv2:portProperty lv2:toggled;
+         ].
