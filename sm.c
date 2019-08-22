@@ -29,8 +29,8 @@
 #define NCHANS 2		// number of channels for plugin 
 #define SM_URI "http://stackingdwarves.net/lv2/sm"
 
-#define NCHANPORTS 7		// number of per-channel ports
-#define NGLOBALS 1		// number of global ports
+#define NCHANPORTS 10		// number of per-channel ports
+#define NGLOBALS 2		// number of global ports
 #define MAXDLY 0.05f		// the maximum delay, in seconds
 #define LP_SMOOTHING 7.0f	// heuristic value for gain parameter smoothing
 #define DB_CO(_dbgain) ((_dbgain) > -89.9f ? powf(10.0f, (_dbgain) * 0.05f) : 0.0f)
@@ -38,22 +38,27 @@
 
 typedef enum {
         // NGLOBALS global ports
-	SM_gain   =  0,
+	SM_gain     = 0,
+	SM_mono     = 1,
 	// NCHANPORTS per-channel ports
-	SM_in       = 1,
-	SM_out      = 2,
-	SM_att      = 3,
-	SM_attOn    = 4,
-	SM_delay    = 5,
-	SM_delayOn  = 6,
-	SM_active   = 7
+	SM_in       = 2,
+	SM_out      = 3,
+	SM_active   = 4,
+	SM_att      = 5,
+	SM_attOn    = 6,
+	SM_delay    = 7,
+	SM_delayOn  = 8,
+	SM_invert   = 9,
+	SM_loshF    = 10,
+	SM_loshG    = 11
 	// so use multiples for additional channels
-} PortTypes;
+} port_t;
 
 typedef struct {
 	// global ports
 	struct {
-		float *gain;
+		float *gain;		// in dB
+		float *mono;		// 1 means all channels mixed down to mono
 	} gports;
 	// per-channel ports
 	struct {
@@ -61,11 +66,14 @@ typedef struct {
 		const float *in[NCHANS];
 		float *out[NCHANS];
 		// control port data per channel
+		float *active[NCHANS];	// 0 is off
 		float *att[NCHANS];	// in dB
 		float *attOn[NCHANS];	// 0 is off
 		float *delay[NCHANS];	// in ms
 		float *delayOn[NCHANS];	// 0 is off
-		float *active[NCHANS];	// 0 is off
+		float *invert[NCHANS];  // 1 means polarity inversion
+		float *loshF[NCHANS];	// low shelf frequency in Hz
+		float *loshG[NCHANS];	// low shelf gain in dB
 	} cports;
 	// internal data
 	double rate;			// sample rate in Hz
@@ -76,7 +84,7 @@ typedef struct {
 	float target_delay[NCHANS];	// in samples
 	float current_gain[NCHANS];	// as coefficient
 	float target_gain[NCHANS];	// as coefficient
-} Sm;
+} sm_t;
 
 // Cubic interpolation function
 static inline float cube_interp(
@@ -102,7 +110,7 @@ static LV2_Handle instantiate(
         const LV2_Feature* const* features
 )
 {
-	Sm *sm = (Sm*) calloc(1, sizeof(Sm));
+	sm_t *sm = (sm_t*) calloc(1, sizeof(sm_t));
 	unsigned int nelem = 1;
 	
 	sm->rate = rate;
@@ -128,20 +136,26 @@ static void connect_port(
 )
 {
 	// slight ugliness to keep channel count flexible at compile time
-        int ptype = (port < NGLOBALS ? port : (port - NGLOBALS) % NCHANPORTS + NGLOBALS);
+        port_t ptype = (port < NGLOBALS ? port : (port - NGLOBALS) % NCHANPORTS + NGLOBALS);
         int pindex = (port - NGLOBALS) / NCHANPORTS;
         
-        Sm *sm = (Sm*) instance;
+        sm_t *sm = (sm_t*) instance;
 
-	switch ((PortTypes)ptype) {
+	switch (ptype) {
         case SM_gain:
 		sm->gports.gain = (float*)data;
+		break;
+	case SM_mono:
+		sm->gports.mono = (float*)data;
 		break;
 	case SM_in:
 		sm->cports.in[pindex] = (const float*)data;
 		break;
 	case SM_out:
 		sm->cports.out[pindex] = (float*)data;
+		break;
+	case SM_active:
+		sm->cports.active[pindex] = (float*)data;
 		break;
 	case SM_att:
 		sm->cports.att[pindex] = (float*)data;
@@ -155,15 +169,21 @@ static void connect_port(
 	case SM_delayOn:
 		sm->cports.delayOn[pindex] = (float*)data;
 		break;
-	case SM_active:
-		sm->cports.active[pindex] = (float*)data;
+	case SM_invert:
+		sm->cports.invert[pindex] = (float*)data;
+		break;
+	case SM_loshF:
+		sm->cports.loshF[pindex] = (float*)data;
+		break;
+	case SM_loshG:
+		sm->cports.loshG[pindex] = (float*)data;
 		break;
 	}
 }
 
 static void activate(LV2_Handle instance)
 {
-        Sm *sm = (Sm*)instance;
+        sm_t *sm = (sm_t*)instance;
         for (int i=0; i<NCHANS; i++) {
                 sm->current_gain[i] = 0.0f;
                 sm->target_gain[i] = 0.0f;
@@ -176,7 +196,7 @@ static void activate(LV2_Handle instance)
 static void
 run(LV2_Handle instance, uint32_t n_samples)
 {
-	Sm                 *sm = (Sm*)instance;
+	sm_t               *sm = (sm_t*)instance;
 
 	const float* const *in = sm->cports.in;
 	float* const      *out = sm->cports.out;
@@ -240,7 +260,7 @@ deactivate(LV2_Handle instance)
 static void
 cleanup(LV2_Handle instance)
 {
-        Sm *sm = (Sm*) instance;
+        sm_t *sm = (sm_t*) instance;
 	for (int i=0; i<NCHANS; i++) {
                 free(sm->dlybuf[i]);
         }
