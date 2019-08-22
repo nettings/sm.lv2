@@ -42,7 +42,7 @@
 		lv2:index 1;
 		lv2:symbol "mono";
 		lv2:name "Mono";
-		rdfs:comment "mix all inputs together and send to all outputs.";
+		rdfs:comment "send left input to all outputs";
 		lv2:default 0.0;
 		lv2:minimum 0.0;
 		lv2:maximum 1.0;
@@ -118,7 +118,7 @@
 		a lv2:ControlPort, lv2:InputPort;
                 lv2:index 9;
                 lv2:symbol "invertL";
-                lv2:name "ø L";
+                lv2:name "ø Invert L";
                 rdfs:comment "invert polarity of left channel";
                 lv2:default 0.0;
                 lv2:minimum 0.0;
@@ -153,7 +153,7 @@
 		a lv2:ControlPort, lv2:InputPort;
 		lv2:index 12;
 		lv2:symbol "loshOnL";
-		lv2:name "Low shelf L on";
+		lv2:name "Low shelf on L";
 		rdfs:comment "enable low shelf on left channel";
                 lv2:default 0.0;
                 lv2:minimum 0.0;
@@ -230,7 +230,7 @@
                 a lv2:ControlPort, lv2:InputPort;
                 lv2:index 20;
                 lv2:symbol "invertR";
-                lv2:name "Polarity R";
+                lv2:name "ø Invert R";
                 rdfs:comment "invert polarity of right channel";
                 lv2:default 0.0;
                 lv2:minimum 0.0;
@@ -264,7 +264,7 @@
                 a lv2:ControlPort, lv2:InputPort;
                 lv2:index 23;
                 lv2:symbol "loshOnR";
-                lv2:name "Low shelf R on";
+                lv2:name "Low shelf on R";
                 rdfs:comment "enable low shelf on right channel";
                 lv2:default 0.0;
                 lv2:minimum 0.0;

@@ -214,6 +214,9 @@ run(LV2_Handle instance, uint32_t n_samples)
 	
 	for (int i=0; i < NCHANS; i++) {
 
+		// if mono switch is enabled, always play from first channel
+		const int source = (*(sm->gports.mono)) ? 0 : i;
+		
 		// compute attenuation gain if enabled, factor in polarity switch
 		const float a = (*(sm->cports.attOn[i]) ? DB_CO(*(sm->cports.att[i])) : 1.0f) * (*sm->cports.invert[i] ? -1.0f : 1.0f) ;
 		// compute total channel gain if enabled
@@ -225,7 +228,7 @@ run(LV2_Handle instance, uint32_t n_samples)
 			// No. Nudge to the nearest whole-sample delay for efficient lossless operation.
 			for (uint32_t pos = 0; pos < n_samples; pos++) {
 				long readp = sm->writep[i] - (long)round(sm->current_delay[i]);
-				sm->dlybuf[i][sm->writep[i] & sm->dlybufmask[i]] = in[i][pos];
+				sm->dlybuf[i][sm->writep[i] & sm->dlybufmask[i]] = in[source][pos];
 				sm->writep[i]++;
 	        		sm->current_gain[i] = sm->current_gain[i] * lp_i + sm->target_gain[i] * lp;
 			        out[i][pos] = sm->dlybuf[i][readp & sm->dlybufmask[i]] * sm->current_gain[i];
@@ -246,7 +249,7 @@ run(LV2_Handle instance, uint32_t n_samples)
 					sm->dlybuf[i][(readp + (long)slope) & sm->dlybufmask[i]], 
 					sm->dlybuf[i][(readp + 2*(long)slope) & sm->dlybufmask[i]]
 				);
-				sm->dlybuf[i][sm->writep[i] & sm->dlybufmask[i]] = in[i][pos];
+				sm->dlybuf[i][sm->writep[i] & sm->dlybufmask[i]] = in[source][pos];
 
 	        		sm->current_gain[i] = sm->current_gain[i] * lp_i + sm->target_gain[i] * lp;
 			        out[i][pos] = read * sm->current_gain[i];
