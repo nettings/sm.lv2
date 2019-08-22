@@ -27,7 +27,7 @@
 #include "lv2/lv2plug.in/ns/lv2core/lv2.h"
 
 #define NCHANS 2		// number of channels for plugin 
-#define SM_URI "http://stackingdwarves.net/lv2/sm"
+#define SM_URI "http://stackingdwarves.net/lv2/sm#stereo"
 
 #define NCHANPORTS 10		// number of per-channel ports
 #define NGLOBALS 2		// number of global ports
@@ -209,13 +209,12 @@ run(LV2_Handle instance, uint32_t n_samples)
 	
 	for (int i=0; i < NCHANS; i++) {
 
-		// compute attenuation gain if enabled
-		const float a = (*(sm->cports.attOn[i]) ? DB_CO(*(sm->cports.att[i])) : 1.0f) ;
+		// compute attenuation gain if enabled, factor in polarity switch
+		const float a = (*(sm->cports.attOn[i]) ? DB_CO(*(sm->cports.att[i])) : 1.0f) * (*sm->cports.invert[i] ? -1.0f : 1.0f) ;
 		// compute total channel gain if enabled
 		sm->target_gain[i] = (*(sm->cports.active[i]) ? g * a : 0.0f);
 		// compute channel delay if enabled
 		sm->target_delay[i] = (*(sm->cports.delayOn[i]) ? CALC_DLY(*(sm->cports.delay[i]), sm->rate) : 0.0f);
-		
 		// Has the delay setting changed?
 		if (sm->target_delay[i] == sm->current_delay[i]) {
 			// No. Nudge to the nearest whole-sample delay for efficient lossless operation.
