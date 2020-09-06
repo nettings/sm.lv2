@@ -102,7 +102,7 @@
 		rdfs:comment "compensate left channel arrival time at the listening spot";
 		lv2:default 0.0;
 		lv2:minimum 0.0;
-		lv2:maximum 50.0;
+		lv2:maximum 500.0;
 		units:unit units:ms;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
@@ -214,7 +214,7 @@
 		rdfs:comment "compensate right channel arrival time at the listening spot";
 		lv2:default 0.0;
 		lv2:minimum 0.0;
-		lv2:maximum 50.0;
+		lv2:maximum 500.0;
 		units:unit units:ms;
 	], [
 		a lv2:ControlPort, lv2:InputPort;
