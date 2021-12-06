@@ -16,13 +16,11 @@ def options(opt):
     autowaf.set_options(opt)
 
 def configure(conf):
-    autowaf.display_header('Speaker Management Configuration')
     conf.load('compiler_c', cache=True)
     conf.load('lv2', cache=True)
     conf.load('autowaf', cache=True)
 
-    if not autowaf.is_child():
-        autowaf.check_pkg(conf, 'lv2', uselib_store='LV2')
+    autowaf.check_pkg(conf, 'lv2', uselib_store='LV2')
 
     conf.check(features='c cshlib', lib='m', uselib_store='M', mandatory=False)
 
@@ -52,16 +50,11 @@ def build(bld):
             install_path = '${LV2DIR}/%s' % bundle)
 
     # Use LV2 headers from parent directory if building as a sub-project
-    includes = None
-    if autowaf.is_child:
-        includes = '../..'
-
     # Build plugin library
     obj = bld(features     = 'c cshlib',
               source       = 'sm.c',
               name         = 'sm',
               target       = '%s/sm' % bundle,
               install_path = '${LV2DIR}/%s' % bundle,
-              uselib       = 'M LV2',
-              includes     = includes)
+              uselib       = 'M LV2')
     obj.env.cshlib_PATTERN = module_pat
